@@ -37,7 +37,7 @@ export const LiveVoice: React.FC<LiveVoiceProps> = ({ isOpen, onClose, voiceName
           speechConfig: {
             voiceConfig: { prebuiltVoiceConfig: { voiceName } },
           },
-          systemInstruction: "You are AQUA SLOVIC, in a live voice conversation. Be concise and helpful. Maintain your hacker/teacher persona.",
+          systemInstruction: "You are Wisdom AI, in a live voice conversation. Be concise and helpful. Maintain your hacker/teacher persona. Use Google Search for every query.",
         },
         callbacks: {
           onopen: () => {

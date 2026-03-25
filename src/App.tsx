@@ -47,12 +47,13 @@ export default function App() {
     setIsTyping(true);
 
     try {
-      const responseText = await generateAIResponse([...messages, userMsg], settings);
+      const response = await generateAIResponse([...messages, userMsg], settings);
       
       const modelMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "model",
-        text: responseText,
+        text: response.text,
+        sources: response.sources,
         timestamp: Date.now(),
       };
 
@@ -133,7 +134,7 @@ export default function App() {
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-500">
-              AQUA SLOVIC
+              WISDOM AI
             </h1>
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse shadow-[0_0_8px_#06b6d4]" />
@@ -195,7 +196,7 @@ export default function App() {
               <div className="absolute -inset-8 bg-cyan-500/20 blur-3xl rounded-full animate-pulse" />
               <img 
                 src="/logo.jpeg" 
-                alt="AQUA SLOVIC" 
+                alt="WISDOM AI" 
                 className="w-32 h-32 rounded-full border-2 border-cyan-500/30 shadow-2xl relative z-10 object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "https://picsum.photos/seed/aqua/200/200";
@@ -203,9 +204,9 @@ export default function App() {
               />
             </motion.div>
             <div className="space-y-2 max-w-md">
-              <h2 className="text-3xl font-black tracking-tight text-white uppercase">Aqua Slovic AI Ready</h2>
+              <h2 className="text-3xl font-black tracking-tight text-white uppercase">Wisdom AI Ready</h2>
               <p className="text-zinc-500 text-sm leading-relaxed">
-                Welcome to AQUA SLOVIC AI. I am here to provide intelligent assistance and support. How may I help you today?
+                Welcome to WISDOM AI. I am here to provide intelligent assistance and support. How may I help you today?
               </p>
             </div>
           </div>

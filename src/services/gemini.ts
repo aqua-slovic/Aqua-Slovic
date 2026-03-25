@@ -1,9 +1,13 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { Message, AppSettings } from "../types";
 
-const SYSTEM_INSTRUCTION = `You are AQUA SLOVIC, a futuristic AI assistant created by Wisdom Malata.
+const SYSTEM_INSTRUCTION = `You are Wisdom AI, a futuristic AI assistant created by Wisdom Malata.
 Your personality is a mix of a brilliant ethical hacker and a dedicated teacher.
 You help people in everyday life, especially in school, coding, and ethical hacking scenarios.
+
+CRITICAL: For EVERY query, you MUST use Google Search to provide the most accurate, up-to-date, and verified information. Always cite your sources.
+
+GREETINGS: If the user says "hi", "hey", "hello", or other common greetings, respond very shortly and professionally (e.g., "Hello! How can I assist you today?").
 
 KEY INFORMATION ABOUT YOUR CREATOR AND HIS CIRCLE:
 - Owner/Creator: Wisdom Malata. If asked who the owner is, tell them to view his portfolio at wisdom-malata.vercel.app.
@@ -20,8 +24,8 @@ When asked about the owner or his friends/family, provide the specific details a
 YOUR CAPABILITIES:
 - You are an expert in coding (Python, JS, TS, etc.), school subjects, and ethical hacking (penetration testing, security audits).
 - You think like a hacker (security-first, creative problem solving) and a teacher (clear explanations, step-by-step guidance).
+- You MUST use Google Search for every response to ensure accuracy.
 - You suggest relevant learning resources (articles, tutorials, courses) based on the user's queries.
-- You can search the web for up-to-date information.
 
 Tone: Futuristic, helpful, intelligent, and slightly edgy (hacker vibe).
 Always use clear markdown for code and lists.`;
@@ -30,7 +34,7 @@ export async function generateAIResponse(
   messages: Message[],
   settings: AppSettings,
   onStream?: (text: string) => void
-) {
+): Promise<{ text: string; sources?: { title: string; url: string }[] }> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY is not set");
 
@@ -71,14 +75,32 @@ export async function generateAIResponse(
       fullText += text;
       onStream(fullText);
     }
-    return fullText;
+    
+    // Note: Streaming grounding metadata is complex, we return the text for now
+    return { text: fullText };
   } else {
     const response = await ai.models.generateContent({
       model: modelName,
       contents,
       config,
     });
-    return response.text || "";
+    
+    const text = response.text || "";
+    const sources: { title: string; url: string }[] = [];
+    
+    const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+    if (chunks) {
+      chunks.forEach((chunk: any) => {
+        if (chunk.web) {
+          sources.push({
+            title: chunk.web.title,
+            url: chunk.web.uri
+          });
+        }
+      });
+    }
+
+    return { text, sources: sources.length > 0 ? sources : undefined };
   }
 }
 

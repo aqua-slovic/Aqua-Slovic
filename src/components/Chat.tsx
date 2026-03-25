@@ -44,12 +44,30 @@ export const Chat: React.FC<ChatProps> = ({ messages, isTyping }) => {
             >
               {msg.role === "model" && (
                 <div className="absolute -top-3 -left-2 bg-cyan-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                  AQUA SLOVIC
+                  WISDOM AI
                 </div>
               )}
               <div className="prose prose-invert max-w-none">
                 <ReactMarkdown>{msg.text}</ReactMarkdown>
               </div>
+              {msg.sources && msg.sources.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-cyan-500/10 space-y-2">
+                  <p className="text-[10px] font-bold text-cyan-500/50 uppercase tracking-widest">Sources from Google</p>
+                  <div className="flex flex-wrap gap-2">
+                    {msg.sources.map((source, idx) => (
+                      <a
+                        key={idx}
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded border border-cyan-500/20 transition-colors flex items-center gap-1"
+                      >
+                        <span className="truncate max-w-[120px]">{source.title}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
               {msg.attachment && (
                 <div className="mt-3 p-2 bg-black/20 rounded-lg border border-white/10 flex items-center gap-3">
                   {msg.attachment.mimeType.startsWith("image/") ? (

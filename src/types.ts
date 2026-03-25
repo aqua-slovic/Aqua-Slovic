@@ -12,6 +12,10 @@ export interface Message {
     mimeType: string;
     name: string;
   };
+  sources?: {
+    title: string;
+    url: string;
+  }[];
 }
 
 export type ModelType = "fast" | "pro";
